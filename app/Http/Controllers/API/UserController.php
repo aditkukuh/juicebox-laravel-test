@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Http\Controllers\API\BaseController;
 
 class UserController extends BaseController
@@ -14,11 +15,9 @@ class UserController extends BaseController
         $user = User::find($id);
 
         if (!$user) {
-            return response()->json([
-                'message' => 'User not found'
-            ], 404);
+            return $this->sendError('User not found');
         }
 
-        return $this->sendResponse($user, 'get user by id successfully.');
+        return $this->sendResponse(new UserResource($user), 'Get user by ID successfully.');
     }
 }
