@@ -35,20 +35,22 @@ class PostControllerTest extends TestCase
     public function test_index()
     {
         Post::factory()->count(5)->create(['user_id' => $this->user->id]);
-
+    
         $response = $this->getJson(route('posts.index'));
-
+    
         $response->assertStatus(200)
                  ->assertJsonStructure([
-                     'data' => [],
+                     'data' => [
+                         '*' => ['id', 'title', 'content', 'created_at', 'updated_at']
+                     ],
                      'status',
-                     'message',
+                     'message'
                  ])
                  ->assertJson([
                      'status' => true,
-                     'message' => 'Posts retrieved successfully.',
+                     'message' => 'Posts retrieved successfully.'
                  ]);
-    }
+    }    
 
    /**
      * Test if a specific post can be shown.

@@ -20,4 +20,18 @@ class UserController extends BaseController
 
         return $this->sendResponse(new UserResource($user), 'Get user by ID successfully.');
     }
+
+    public function getAll()
+    {
+        $users = User::paginate(5);
+
+        if (!$users) {
+            return $this->sendError('User not found');
+        }
+
+        return $result = UserResource::collection($users)->additional([
+            'status' => true,
+            'message' => 'users retrieved successfully.',
+        ]);;
+    }
 }

@@ -13,7 +13,8 @@ Route::controller(AuthController::class)->group(function(){
 
 Route::middleware('auth:sanctum')->group( function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
-    Route::get('user/{id}', [UserController::class, 'getUserById']);
+    Route::get('user/{id}', [UserController::class, 'getUserById'])->name('user.getUserById');
+    Route::get('users', [UserController::class, 'getAll'])->name('user.getAll');
 
     //post
     Route::get('posts', [PostController::class, 'index'])->name('posts.index');
