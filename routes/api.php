@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\PostController;
 use App\Http\Controllers\API\UserController;
+use App\Http\Controllers\API\WeatherController;
 
 Route::controller(AuthController::class)->group(function(){
     Route::post('register', 'register')->name('register');
@@ -18,8 +19,11 @@ Route::middleware('auth:sanctum')->group( function () {
 
     //post
     Route::get('posts', [PostController::class, 'index'])->name('posts.index');
-    Route::get('posts/{id}', [PostController::class, 'show'])->name('posts.show');;
-    Route::post('posts', [PostController::class, 'store'])->name('posts.store');;
-    Route::patch('posts/{id}', [PostController::class, 'update'])->name('posts.update');;
-    Route::delete('posts/{id}', [PostController::class, 'destroy'])->name('posts.destroy');;
+    Route::get('posts/{id}', [PostController::class, 'show'])->name('posts.show');
+    Route::post('posts', [PostController::class, 'store'])->name('posts.store');
+    Route::patch('posts/{id}', [PostController::class, 'update'])->name('posts.update');
+    Route::delete('posts/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
+
+    //weather
+    Route::get('weather', [WeatherController::class, 'getCurrentWeather'])->name('weather.getCurrentWeather');
 });
