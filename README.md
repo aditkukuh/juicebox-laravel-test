@@ -1,9 +1,6 @@
-# Laravel RESTful API Project
+# Juicebox Laravel Developer Code Test
 
-## Objective
-This project demonstrates proficiency in Laravel API development, including authentication, database design, and adherence to best practices through a RESTful API implementation.
-
-## Project Setup
+## 1 Project Setup
 
 ### Prerequisites
 - PHP 8.x
@@ -13,22 +10,23 @@ This project demonstrates proficiency in Laravel API development, including auth
 
 ### Installation Steps
 
-#### 1. Clone the Repository
+#### Clone the Repository
 ```bash
 git clone <repository-url>
 cd <project-directory>
-2. Install Dependencies
-bash
-Copy code
+```
+####  Install Dependencies
+```bash
 composer install
-3. Set Up Environment
+```
+#### Set Up Environment
 Copy .env.example to .env:
 
-bash
 Copy code
+```bash
 cp .env.example .env
+```
 Configure the database settings in the .env file:
-
 makefile
 Copy code
 DB_CONNECTION=mysql
@@ -37,17 +35,19 @@ DB_PORT=3306
 DB_DATABASE=<your-database-name>
 DB_USERNAME=<your-database-username>
 DB_PASSWORD=<your-database-password>
-4. Generate Application Key
-bash
-Copy code
-php artisan key:generate
-5. Run Migrations
-bash
-Copy code
-php artisan migrate
-6. Serve the Application
-To start the application, use the following command:
 
+####  Generate Application Key
 bash
 Copy code
+```bash
+php artisan key:generate
+```
+####  Run Migrations
+```bash
+php artisan migrate
+```
+####  Serve the Application
+To start the application, use the following command:
+```bash
 php artisan serve
+```
