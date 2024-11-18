@@ -7,28 +7,31 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
+use App\Services\WeatherService;
 
 class UpdateWeatherJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    protected $weatherService;
+
+    public function __construct()
+    {
+        $this->weatherService = new WeatherService();
+    }
+
     public function handle()
     {
-        $response = Http::get('http://api.weatherapi.com/v1/current.json', [
-            'key' => env('WEATHER_APP_KEY'),
-            'q' => 'Perth',
-            'aqi' => 'no',
-        ]);
+        $weatherData = $this->weatherService->fetchWeatherData('Perth');
 
-        if ($response->successful()) {
-            Cache::put('weather_data', $response->json(), now()->addMinutes(15));
+        if ($weatherData) {
+            Cache::put('weather_data', $weatherData, now()->addMinutes(15));
 
-            // will dispatch every 1 hour
+            // Dispatch a new job to run after 1 hour
             dispatch(new self())->delay(now()->addMinutes(60));
         } else {
-            \Log::error('Gagal mengambil data cuaca dari API');
+            \Log::error('Failed to update weather data');
         }
     }
 }
