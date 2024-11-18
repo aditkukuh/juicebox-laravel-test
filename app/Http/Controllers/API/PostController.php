@@ -8,107 +8,117 @@ use Illuminate\Http\Request;
 use App\Http\Resources\PostResource;
 use App\Http\Controllers\API\BaseController;
 use Illuminate\Support\Facades\Auth;
-
+use Exception;
 class PostController extends BaseController
 {
-     /**
-     * Display a listing of the posts (only posts belonging to the authenticated user), paginated.
-     *
+    /**
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
     {
-        $posts = Post::where('user_id', Auth::id())
-            ->paginate(5);
+        try {
+            $posts = Post::where('user_id', Auth::id())
+                ->paginate(5);
 
-        return $result = PostResource::collection($posts)->additional([
-            'status' => true,
-            'message' => 'Posts retrieved successfully.',
-        ]);;
+            return PostResource::collection($posts)->additional([
+                'status' => true,
+                'message' => 'Posts retrieved successfully.',
+            ]);
+        } catch (Exception $e) {
+            return $this->sendError('Failed to retrieve posts', ['error' => $e->getMessage()]);
+        }
     }
 
     /**
-     * Display a specific post (only the post belonging to the authenticated user).
-     *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        $post = Post::where('user_id', Auth::id())->find($id);
+        try {
+            $post = Post::where('user_id', Auth::id())->find($id);
 
-        if (!$post) {
-            return $this->sendError('Post not found');
+            if (!$post) {
+                return $this->sendError('Post not found');
+            }
+
+            return $this->sendResponse(new PostResource($post), 'Post retrieved successfully.');
+        } catch (Exception $e) {
+            return $this->sendError('Failed to retrieve post', ['error' => $e->getMessage()]);
         }
-
-        return $this->sendResponse(new PostResource($post), 'Post retrieved successfully.');
     }
 
     /**
-     * Create a new post (post belongs to the authenticated user).
-     *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-        ]);
+        try {
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'content' => 'required|string',
+            ]);
 
-        $post = Post::create([
-            'title' => $request->title,
-            'content' => $request->content,
-            'user_id' => Auth::id(),
-        ]);
-    
-        return $this->sendResponse(new PostResource($post), 'Post created successfully.');
+            $post = Post::create([
+                'title' => $request->title,
+                'content' => $request->content,
+                'user_id' => Auth::id(),
+            ]);
+        
+            return $this->sendResponse(new PostResource($post), 'Post created successfully.');
+        } catch (Exception $e) {
+            return $this->sendError('Failed to create post', ['error' => $e->getMessage()]);
+        }
     }
 
     /**
-     * Update a post (only the post belonging to the authenticated user).
-     *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'title' => 'string|max:255',
-            'content' => 'string',
-        ]);
+        try {
+            $request->validate([
+                'title' => 'string|max:255',
+                'content' => 'string',
+            ]);
 
-        $post = Post::where('user_id', Auth::id())->find($id);
+            $post = Post::where('user_id', Auth::id())->find($id);
 
-        if (!$post) {
-            return $this->sendError('Post not found');
+            if (!$post) {
+                return $this->sendError('Post not found');
+            }
+
+            $post->title = $request->title ?? $post->title;
+            $post->content = $request->content ?? $post->content;
+            $post->save();
+
+            return $this->sendResponse(new PostResource($post), 'Post updated successfully.');
+        } catch (Exception $e) {
+            return $this->sendError('Failed to update post', ['error' => $e->getMessage()]);
         }
-
-        $post->title = $request->title ?? $post->title;
-        $post->content = $request->content ?? $post->content;
-        $post->save();
-
-        return $this->sendResponse(new PostResource($post), 'Post updated successfully.');
     }
 
     /**
-     * Delete a post (only the post belonging to the authenticated user).
-     *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        $post = Post::where('user_id', Auth::id())->find($id);
+        try {
+            $post = Post::where('user_id', Auth::id())->find($id);
 
-        if (!$post) {
-            return $this->sendError('Post not found');
+            if (!$post) {
+                return $this->sendError('Post not found');
+            }
+
+            $post->delete();
+
+            return $this->sendResponse([], 'Post deleted successfully.');
+        } catch (Exception $e) {
+            return $this->sendError('Failed to delete post', ['error' => $e->getMessage()]);
         }
-
-        $post->delete();
-
-        return $this->sendResponse([], 'Post deleted successfully.');
     }
 }

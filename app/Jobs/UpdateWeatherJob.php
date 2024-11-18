@@ -24,6 +24,9 @@ class UpdateWeatherJob implements ShouldQueue
 
         if ($response->successful()) {
             Cache::put('weather_data', $response->json(), now()->addMinutes(15));
+
+            // will dispatch every 1 hour
+            dispatch(new self())->delay(now()->addMinutes(60));
         } else {
             \Log::error('Gagal mengambil data cuaca dari API');
         }
