@@ -62,6 +62,11 @@ run this command for testing:
 ```bash
  .\vendor\bin\phpunit
 ```
+or
+```bash
+ php artisan test 
+```
+
 ## 4 Configure Weather API
 set the WEATHER_APP_KEY= with your APP KEY from openweathermap.org
 ```ini
